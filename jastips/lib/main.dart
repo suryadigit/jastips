@@ -1,256 +1,32 @@
-// import 'package:flutter/material.dart';
-// import 'package:jastips/components/list.dart';
-
-// void main() {
-//   runApp(NoteApp());
-// }
-
-// class NoteApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Note App',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       home: NoteListScreen(),
-//     );
-//   }
-// }
-
- 
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:jastips/components/list.dart';
+import 'package:cool_alert/cool_alert.dart';
 
 void main() {
   runApp(NoteApp());
 }
 
 class NoteApp extends StatelessWidget {
+  static List<Note> notes = [];
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      title: 'Note App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
       home: NoteListScreen(),
     );
   }
 }
 
-class Note {
-  final String title;
-  final String description;
-  final String avatarImagePath;
-
-  Note({
-    required this.title,
-    required this.description,
-    required this.avatarImagePath,
-  });
-}
-
-class NoteListScreen extends StatefulWidget {
-  @override
-  _NoteListScreenState createState() => _NoteListScreenState();
-}
-
-class _NoteListScreenState extends State<NoteListScreen> {
-  List<Note> notes = [];
-
-  void addNote(Note note) {
-    setState(() {
-      notes.add(note);
-    });
-  }
-
-  void onDelete(int index) {
-    setState(() {
-      notes.removeAt(index);
-    });
-    Navigator.pop(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-      ),
-      body: ListView.separated(
-        itemCount: notes.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NoteDetailScreen(
-                    note: notes[index],
-                    onDelete: () {
-                      onDelete(index);
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-              );
-            },
-            leading: CircleAvatar(
-              backgroundImage: AssetImage(notes[index].avatarImagePath),
-            ),
-            title: Text(notes[index].title),
-            subtitle: Text(notes[index].description),
-          );
-        },
-        separatorBuilder: (context, index) => Divider(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddNoteScreen()),
-          ).then((result) {
-            if (result != null && result is Note) {
-              addNote(result);
-            }
-          });
-        },
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class NoteDetailScreen extends StatefulWidget {
-  final Note note;
-  final VoidCallback onDelete;
-
-  NoteDetailScreen({
-    required this.note, 
-    required this.onDelete});
-
-    
-
-  @override
-  State<NoteDetailScreen> createState() => _NoteDetailScreenState();
-}
-
-class _NoteDetailScreenState extends State<NoteDetailScreen> {
-  List<Note> notes =[];
-   // Fungsi untuk menambahkan catatan baru ke dalam daftar notes
-  void addNote(Note note) {
-    setState(() {
-      notes.add(note);
-    });
-  }
-
-  // Fungsi untuk menghapus catatan dari daftar notes
-  void onDelete(int index) {
-    setState(() {
-      notes.removeAt(index);
-    });
-    Navigator.pop(context);
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Note Detail'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Align(
-              alignment: Alignment.center,
-              child: FractionallySizedBox(
-                widthFactor: 0.5,
-                child: CircleAvatar(
-                  radius: 15,
-                  backgroundImage: AssetImage(widget.note.avatarImagePath),
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-            Center(
-              child: Text(
-                widget.note.title,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(widget.note.description),
-            Text(
-                'Tanggal: 23 April 2023',
-              style: TextStyle(fontSize: 16),
-            ),
-            Text(
-              'Penulis: Anonymous', // Tampilkan penulis sesuai data yang ada
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Hapus Catatan'),
-                          content: Text('Apakah Anda yakin ingin menghapus catatan ini?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Menutup dialog
-                              },
-                              child: Text('Batal'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                widget.onDelete(); // Panggil fungsi onDelete
-                              },
-                              child: Text('Hapus'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: Text('Hapus'),
-                  style: ElevatedButton.styleFrom(primary: Colors.red),
-                ),
-                SizedBox(width: 16),
-          ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EditNoteScreen(note: widget.note),
-      ),
-    );
-  },
-  child: Text('Edit'),
-  style: ElevatedButton.styleFrom(primary: const Color.fromARGB(255, 54, 67, 244)),
-),
-
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class AddNoteScreen extends StatefulWidget {
+  final Function(Note) addNote;
+
+  AddNoteScreen({required this.addNote});
+
   @override
   _AddNoteScreenState createState() => _AddNoteScreenState();
 }
@@ -258,217 +34,180 @@ class AddNoteScreen extends StatefulWidget {
 class _AddNoteScreenState extends State<AddNoteScreen> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  String selectedAvatarImagePath = 'assets/avatar1.png';
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Add Note'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DropdownButton<String>(
-              value: selectedAvatarImagePath,
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    selectedAvatarImagePath = newValue;
-                  });
-                }
-              },
-              items: [
-                'assets/avatar1.png',
-                'assets/avatar2.png',
-                // Add more avatar image paths
-              ].map<DropdownMenuItem<String>>(
-                (String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage(value),
-                    ),
-                  );
-                },
-              ).toList(),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(labelText: 'Title'),
-            ),
-            TextField(
-              controller: descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                String title = titleController.text;
-                String description = descriptionController.text;
-                String avatarImagePath = selectedAvatarImagePath;
-                Navigator.pop(
-                  context,
-                  Note(
-                    title: title,
-                    description: description,
-                    avatarImagePath: avatarImagePath,
-                  ),
-                );
-              },
-              child: Text('Add'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-class EditNoteScreen extends StatefulWidget {
-  final Note note;
-
-  EditNoteScreen({required this.note});
-
-  @override
-  _EditNoteScreenState createState() => _EditNoteScreenState();
-}
-
-class _EditNoteScreenState extends State<EditNoteScreen> {
-  List<Note> notes = [];
-  TextEditingController titleController = TextEditingController();
   TextEditingController authorController = TextEditingController();
-  DateTime selectedDate = DateTime.now();
-  late String selectedAvatarImagePath;
-  
-  @override
-  void initState() {
-    super.initState();
-    titleController.text = widget.note.title;
-    authorController.text = '  '; // Set penulis awal
-    selectedAvatarImagePath = widget.note.avatarImagePath;
-    notes.add(widget.note);
-  }
+  File? selectedImageFile;
+  bool titleValid = false;
+  bool authorValid = false;
+  bool descriptionValid = false;
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != selectedDate) {
+  Future<void> _pickImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
       setState(() {
-        selectedDate = picked;
+        selectedImageFile = File(pickedFile.path);
       });
     }
   }
 
-  Future<void> _pickImage() async {
-    // Implement image picker logic here
+  void _navigateToAddPage() {
+    Navigator.of(context).pop();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddNoteScreen(addNote: widget.addNote),
+      ),
+    );
+  }
+
+  void _showErrorDialog() {
+    CoolAlert.show(
+      context: context,
+      type: CoolAlertType.error,
+      title: 'Error',
+      text: 'Harap isi semua data untuk menyimpan.',
+      confirmBtnColor: const Color.fromARGB(255, 74, 17, 230),
+      onConfirmBtnTap: _navigateToAddPage,
+    );
+  }
+
+  void _showLoadingDialog() {
+    CoolAlert.show(
+      context: context,
+      type: CoolAlertType.loading,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Note'),
+        backgroundColor: Color.fromARGB(255, 1, 95, 235),
+        title: Text('Tambah Data', style: TextStyle(fontSize: 15),),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            DropdownButton<String>(
-              value: selectedAvatarImagePath,
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    selectedAvatarImagePath = newValue;
-                  });
-                }
-              },
-              items: [
-                DropdownMenuItem<String>(
-                  value: 'assets/avatar1.png',
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage('assets/avatar1.png'),
+            GestureDetector(
+              onTap: _pickImage,
+              child: Center(
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 112, 112, 112)
                   ),
-                ),
-                DropdownMenuItem<String>(
-                  value: 'assets/avatar2.png',
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage('assets/avatar2.png'),
-                  ),
-                ),
-                // Add more DropdownMenuItem as needed
-              ],
+                  child: selectedImageFile != null
+                      ? CircleAvatar(
+                          backgroundImage: FileImage(selectedImageFile!),
+                          radius: 50,
+                        )
+                      : Icon(Icons.add_a_photo, size: 40, color: Theme.of(context).brightness == Brightness.dark ? Color.fromARGB(255, 0, 0, 0) :  Color.fromARGB(255, 255, 255, 255))
+                    ),
+              ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 25),
             TextField(
               controller: titleController,
-              decoration: InputDecoration(labelText: 'Title'),
+              onChanged: (value){
+                setState(() {
+                  titleValid = value.trim().isNotEmpty && value.length >= 5;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Title',
+                fillColor: Colors.black.withOpacity(0.2),
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: titleValid ? Colors.transparent : Colors.red),
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
+                errorText: titleValid ? null :(titleController.text.isEmpty ? null : 'Minimal 5 Karakter'),
+              ),
             ),
+            SizedBox(height: 10),
             TextField(
               controller: authorController,
-              decoration: InputDecoration(labelText: 'Penulis'),
-            ),
-             TextField(
-              controller: authorController,
-              decoration: InputDecoration(labelText: 'Deskripsi'),
-            ),
-            SizedBox(height: 16),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () => _selectDate(context),
-                  child: Text('Pilih Tanggal'),
+              onChanged: (value){
+                setState(() {
+                authorValid = value.trim().isNotEmpty && value.length  >= 5 && value.length <25;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Penulis',
+                fillColor: Colors.black.withOpacity(0.2),
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: authorValid ? Colors.transparent : Colors.red),
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
-                SizedBox(width: 8),
-                Text(
-                  'Tanggal: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                errorText: authorValid ? null :(authorController.text.isEmpty ? null : 'Minimal 5-25 Karakter'),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: descriptionController,
+              maxLines: 5,
+              onChanged: (value) {
+                setState(() {
+                  descriptionValid = value.trim().isNotEmpty && value.length >= 30;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Deskripsi',
+                fillColor: Colors.black.withOpacity(0.2),
+                filled: true,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color.fromARGB(252, 218, 59, 59),
+                  ),
+                  borderRadius: BorderRadius.circular(7.0),
                 ),
-              ],
+                errorText: descriptionValid? null :(descriptionController.text.isEmpty? null : 'Terlalu pendek minimal 30 karakter')
+              ),
             ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => _pickImage(),
-              child: Text('Pilih Gambar'),
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Update the note with edited data
-                    final editedNote = Note(
-                      title: titleController.text,
-                      description: widget.note.description,
-                      avatarImagePath: selectedAvatarImagePath,
-                    );
-                    // Find the index of the edited note in the notes list
-                    final index = notes.indexOf(widget.note);
-                    // Update the note at the specific index
-                    notes[index] = editedNote;
+            SizedBox(height: 30),
+            Center(
+              child: FractionallySizedBox(
+                widthFactor: 1,
+                child: ElevatedButton(
+                  onPressed: (titleValid && authorValid && descriptionValid) ? () async {
+                    String title = titleController.text;
+                    String description = descriptionController.text;
+                    String author = authorController.text;
 
-                    Navigator.pop(context); // Kembali ke halaman NoteListScreen
-                  },
-                  child: Text('Simpan'),
+                    if (selectedImageFile == null ||
+                        title.isEmpty ||
+                        description.isEmpty ||
+                        author.isEmpty) {
+                      _showErrorDialog();
+                    } else {
+                      _showLoadingDialog();
+
+                      Note newNote = Note(
+                        title: title,
+                        description: description,
+                        avatarImagePath: selectedImageFile?.path ?? 'picker',
+                        author: author,
+                        date: DateTime.now(),
+                      );
+                      await Future.delayed(Duration(seconds: 1));
+
+                      widget.addNote(newNote);
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    }
+                  } : null,
+                  child: Text('Tambah'),
+                  style: ElevatedButton.styleFrom(
+                    primary: const Color.fromARGB(255, 74, 17, 230),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                  ),
                 ),
-                SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Kembali ke halaman NoteListScreen
-                  },
-                  child: Text('Batal'),
-                ),
-              ],
-            ),
+              ),
+            )
           ],
         ),
       ),
