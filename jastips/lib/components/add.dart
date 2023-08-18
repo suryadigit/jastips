@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:jastips/components/list.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:material_dialogs/material_dialogs.dart';
 
 class AddNoteScreen extends StatefulWidget {
     final Function(Note)addNote;

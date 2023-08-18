@@ -1,8 +1,5 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:jastips/components/list.dart';
-import 'package:cool_alert/cool_alert.dart';
 
 void main() {
   runApp(NoteApp());

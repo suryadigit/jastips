@@ -139,19 +139,12 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                               Navigator.pop(context);
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Item telah dihapus'),
-                                backgroundColor: Colors.grey,
-                                duration: Duration(seconds: 2),
-                                action: SnackBarAction(
-                                  label: 'OK',
-                                  textColor: Colors.white,
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                  },
-                                ),
-                              ),
-                            );
+                            SnackBar(
+                            content: Text('Item telah dihapus, tidak dapat dipulihkan'),
+                              backgroundColor: Colors.grey,
+                                duration: Duration(seconds: 5),
+                                  )
+                              );
                           },
                           text: 'Delete',
                           iconData: Icons.delete,
