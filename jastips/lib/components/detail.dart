@@ -1,9 +1,11 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:jastips/components/edit.dart';
 import 'package:jastips/components/list.dart';
-import 'package:cool_alert/cool_alert.dart';
+import 'package:material_dialogs/material_dialogs.dart';
+import 'package:material_dialogs/widgets/buttons/icon_button.dart';
+import 'package:material_dialogs/widgets/buttons/icon_outline_button.dart';
 
 class NoteDetailScreen extends StatefulWidget {
   final Note note;
@@ -96,7 +98,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             Row(
               children: [
                 Text(
-                  'Penulis: ${widget.note.author.length <25 ? widget.note.author : widget.note.author.substring(0, 25) + "..."}',
+                  'Penulis: ${widget.note.author.length < 25 ? widget.note.author : widget.note.author.substring(0, 25) + "..."}',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -107,19 +109,57 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    CoolAlert.show(
+                    Dialogs.materialDialog(
+                      msg: 'Anda yakin? Tindakan ini akan menghapus secara permanen.',
+                      title: 'Delete',
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.grey[100]!
+                          : Colors.grey[800]!,
                       context: context,
-                      type: CoolAlertType.confirm,
-                      title: 'Hapus Catatan',
-                      confirmBtnText: 'DELETE',
-                      cancelBtnText: 'CANCEL',
-                      confirmBtnColor: Color.fromARGB(255, 54, 67, 244),
-                      onConfirmBtnTap: () {
-                        onDelete();
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        }
-                      },
+                      actions: [
+                        IconsOutlineButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          text: 'Cancel',
+                          iconData: Icons.cancel_outlined,
+                          textStyle: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.light
+                                ? Colors.grey
+                                : Colors.white,
+                          ),
+                          iconColor: Theme.of(context).brightness == Brightness.light
+                              ? Colors.grey
+                              : Colors.white,
+                        ),
+                        IconsButton(
+                          onPressed: () {
+                            onDelete();
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Item telah dihapus'),
+                                backgroundColor: Colors.grey,
+                                duration: Duration(seconds: 2),
+                                action: SnackBarAction(
+                                  label: 'OK',
+                                  textColor: Colors.white,
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                  },
+                                ),
+                              ),
+                            );
+                          },
+                          text: 'Delete',
+                          iconData: Icons.delete,
+                          color: Colors.red,
+                          textStyle: TextStyle(color: Colors.white),
+                          iconColor: Colors.white,
+                        ),
+                      ],
                     );
                   },
                   child: Text(

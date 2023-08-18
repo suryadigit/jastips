@@ -95,7 +95,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 1, 95, 235),
         title: Text(
-          'Edit/Add',
+          'Edit',
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
         ),
       ),

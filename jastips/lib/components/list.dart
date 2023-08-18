@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:jastips/components/add.dart';
 import 'package:jastips/components/detail.dart';
 import 'package:jastips/main.dart';
 
